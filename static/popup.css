@@ -1,0 +1,213 @@
+/*
+ * Stile del popup.
+ * Colori: ardesia per la "cornice cinema", giallo sottotitolo per la
+ * lingua secondaria (lo stesso usato sopra il video), grigio freddo di fondo.
+ */
+:root {
+  --bg: #e9ecef;
+  --ink: #1f2633;
+  --muted: #5b6472;
+  --frame: #1f2633;
+  --sub-primary: #ffffff;
+  --sub-secondary: #ffe08a;
+  --control: #ffffff;
+  --control-border: #c9ced6;
+  --selected-bg: #1f2633;
+  --selected-ink: #ffe08a;
+  --scale: 1;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #171b22;
+    --ink: #e6e9ee;
+    --muted: #9aa3b1;
+    --frame: #0c0f14;
+    --control: #222834;
+    --control-border: #353d4b;
+    --selected-bg: #ffe08a;
+    --selected-ink: #1f2633;
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 300px;
+  background: var(--bg);
+  color: var(--ink);
+  font: 13px/1.45 "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+main {
+  padding: 14px 16px 16px;
+  display: grid;
+  gap: 14px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+/* --- Anteprima --------------------------------------------------------- */
+
+.preview {
+  margin: 0;
+  height: 112px;
+  border-radius: 6px;
+  background: var(--frame);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 3px;
+  padding: 0 10px 14px;
+  overflow: hidden;
+}
+
+.preview-line {
+  margin: 0;
+  text-align: center;
+  text-shadow: 0 1px 2px #000;
+  transition: font-size 0.15s ease, opacity 0.15s ease, filter 0.15s ease;
+}
+
+.preview-line.primary {
+  color: var(--sub-primary);
+  font-weight: 700;
+  font-size: calc(17px * var(--scale));
+}
+
+.preview-line.secondary {
+  color: var(--sub-secondary);
+  font-size: calc(13px * var(--scale));
+}
+
+.preview-line.blurred {
+  opacity: 0.35;
+  filter: blur(3px);
+}
+
+.preview-line.blurred:hover {
+  opacity: 1;
+  filter: none;
+}
+
+/* --- Controlli --------------------------------------------------------- */
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 6px;
+}
+
+legend {
+  padding: 0;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+button {
+  font: inherit;
+  color: var(--ink);
+  background: var(--control);
+  border: 1px solid var(--control-border);
+  cursor: pointer;
+}
+
+button[aria-pressed="true"] {
+  background: var(--selected-bg);
+  border-color: var(--selected-bg);
+  color: var(--selected-ink);
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Cinque "A" di grandezza crescente, allineate sulla linea di base */
+.sizes {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.sizes button {
+  height: 40px;
+  border-radius: 6px;
+  font-weight: 650;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 7px;
+  line-height: 1;
+}
+
+.sizes button[data-size="0"] { font-size: 11px; }
+.sizes button[data-size="1"] { font-size: 13px; }
+.sizes button[data-size="2"] { font-size: 16px; }
+.sizes button[data-size="3"] { font-size: 19px; }
+.sizes button[data-size="4"] { font-size: 23px; }
+
+/* Interruttore a segmenti */
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.segmented button {
+  padding: 6px 0;
+  margin-left: -1px;
+}
+
+.segmented button:first-child {
+  margin-left: 0;
+  border-radius: 6px 0 0 6px;
+}
+
+.segmented button:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.segmented button[aria-pressed="true"] {
+  position: relative; /* il bordo selezionato resta sopra i vicini */
+}
+
+.toggle {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.toggle input {
+  margin: 2px 0 0;
+  accent-color: var(--ink);
+}
+
+.note {
+  margin: 0;
+  color: var(--muted);
+}
+
+.note button {
+  margin-left: 4px;
+  padding: 1px 8px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preview-line { transition: none; }
+}

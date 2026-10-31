@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <title>Dual Subs</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <!--
+      Il popup è HTML statico: popup.ts si limita a leggere/scrivere le
+      impostazioni e a segnare i pulsanti attivi. Niente framework.
+    -->
+    <main>
+      <h1>Dual Subs</h1>
+
+      <!-- Anteprima: riflette dimensione e sfocatura scelte -->
+      <figure class="preview" aria-label="Anteprima dei sottotitoli">
+        <p class="preview-line primary" id="preview-primary">Where are you going?</p>
+        <p class="preview-line secondary" id="preview-secondary">Dove stai andando?</p>
+      </figure>
+
+      <fieldset>
+        <legend>Dimensione del testo</legend>
+        <div class="sizes" id="font-sizes">
+          <button type="button" data-size="0" aria-label="Molto piccolo">A</button>
+          <button type="button" data-size="1" aria-label="Piccolo">A</button>
+          <button type="button" data-size="2" aria-label="Normale">A</button>
+          <button type="button" data-size="3" aria-label="Grande">A</button>
+          <button type="button" data-size="4" aria-label="Molto grande">A</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Sfoca finché non passi il mouse</legend>
+        <div class="segmented" id="hide-modes">
+          <button type="button" data-hide="none">Nessuno</button>
+          <button type="button" data-hide="primary">Primo</button>
+          <button type="button" data-hide="secondary">Secondo</button>
+          <button type="button" data-hide="both">Entrambi</button>
+        </div>
+      </fieldset>
+
+      <label class="toggle">
+        <input type="checkbox" id="pause-on-hover" />
+        <span>Ferma il video a fine battuta quando il mouse è sul testo</span>
+      </label>
+
+      <p class="note" id="secondary-note"></p>
+    </main>
+    <script src="scripts/popup.js"></script>
+  </body>
+</html>

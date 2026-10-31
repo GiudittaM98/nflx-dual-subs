@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Netflix Dual Subs",
+  "version": "2.0.0",
+  "description": "Due sottotitoli contemporanei su Netflix, per studiare le lingue.",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "32": "assets/icon32.png"
+    }
+  },
+  "icons": {
+    "16": "assets/icon16.png",
+    "32": "assets/icon32.png",
+    "128": "assets/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.netflix.com/*"],
+      "js": ["scripts/page.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://www.netflix.com/*"],
+      "js": ["scripts/content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
