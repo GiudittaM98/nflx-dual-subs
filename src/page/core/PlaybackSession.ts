@@ -35,7 +35,7 @@ import { PlayerClock } from "./PlayerClock";
 import { PrimaryDetector } from "./PrimaryDetector";
 
 /** Anticipo (in secondi) con cui fermare il video prima della fine della battuta. */
-const PAUSE_BEFORE_END_S = 0.15;
+const PAUSE_BEFORE_END_S = 0.32;
 const CONTROLS_CHECK_INTERVAL_MS = 250;
 
 export interface SessionCallbacks {
@@ -104,14 +104,14 @@ export class PlaybackSession {
   start(recommendedTrackKey: string | null): void {
     const available = this.tracks.filter((t) => t.isAvailable).length;
     log.info(
-      `sessione avviata per ${this.movieId}: ${this.tracks.length} lingue, ${available} scaricabili subito`
+      `sessione avviata per ${this.movieId}: ${this.tracks.length} lingue, ${available} scaricabili subito`,
     );
 
-    const recommended = this.tracks.find((t) => t.key === recommendedTrackKey) ?? null;
+    const recommended =
+      this.tracks.find((t) => t.key === recommendedTrackKey) ?? null;
     if (recommended) this.selectPrimary(recommended, false);
     this.applyPreferredSecondary(this.settings.current.secondaryLang);
 
-    
     this.video.addEventListener("play", this.handlePlay);
 
     this.running = true;
@@ -122,7 +122,7 @@ export class PlaybackSession {
   end(): void {
     this.running = false;
     cancelAnimationFrame(this.frameRequest);
-    
+
     this.video.removeEventListener("play", this.handlePlay);
     log.info(`sessione terminata per ${this.movieId}`);
   }
@@ -182,7 +182,8 @@ export class PlaybackSession {
       if (!track || !track.addSources(info.sources)) continue;
       changed = true;
       log.info(`link ricevuti per "${track.label}"`);
-      if (track === this.primary || track === this.secondary) this.loadTrack(track);
+      if (track === this.primary || track === this.secondary)
+        this.loadTrack(track);
     }
     if (changed) this.callbacks.onSelectionChange();
   }
@@ -190,7 +191,9 @@ export class PlaybackSession {
   /** Avvia il download e avvisa quando finisce (per aggiornare il menu). */
   private loadTrack(track: SubtitleTrack): void {
     if (!track.isAvailable) {
-      log.warn(`"${track.label}": Netflix non ha ancora fornito i link di questa lingua`);
+      log.warn(
+        `"${track.label}": Netflix non ha ancora fornito i link di questa lingua`,
+      );
       return;
     }
     track
@@ -229,14 +232,18 @@ export class PlaybackSession {
     const now = performance.now();
     if (now - this.lastControlsCheckAt > CONTROLS_CHECK_INTERVAL_MS) {
       this.lastControlsCheckAt = now;
-      this.overlay.setLifted(document.querySelector(SELECTORS.controls) !== null);
+      this.overlay.setLifted(
+        document.querySelector(SELECTORS.controls) !== null,
+      );
     }
 
     // 4. Riconoscimento del principale (se serve) e calibrazione
     if (!this.primary && !this.primaryChosenByUser) {
       const detected = this.primaryDetector.poll();
       if (detected) {
-        log.info(`principale riconosciuto dai sottotitoli di Netflix: ${detected.label}`);
+        log.info(
+          `principale riconosciuto dai sottotitoli di Netflix: ${detected.label}`,
+        );
         this.selectPrimary(detected, false);
       }
     }
@@ -249,9 +256,9 @@ export class PlaybackSession {
     this.overlay.setText(joinCues(primaryCues), joinCues(secondaryCues));
 
     // Il mouse è sopra il testo? Controllo geometrico a ogni frame, dopo
-// aver aggiornato il testo, così il riquadro è già quello della battuta attuale.
-const hovering = this.overlay.isPointerOverText();
-if (hovering !== this.hovering) this.handleHoverChange(hovering);
+    // aver aggiornato il testo, così il riquadro è già quello della battuta attuale.
+    const hovering = this.overlay.isPointerOverText();
+    if (hovering !== this.hovering) this.handleHoverChange(hovering);
     // 6. Pausa a fine battuta (si usa il principale, o il secondario se manca)
     if (primaryCues.length > 0 && this.primary) {
       this.checkPauseOnHover(t, primaryCues, this.primary.key);
@@ -271,14 +278,21 @@ if (hovering !== this.hovering) this.handleHoverChange(hovering);
    * di nuovo sulla stessa battuta.
    */
   private checkPauseOnHover(t: number, cues: Cue[], trackKey: string): void {
-    if (!this.settings.current.pauseOnHover || !this.hovering || this.video.paused) return;
+    if (
+      !this.settings.current.pauseOnHover ||
+      !this.hovering ||
+      this.video.paused
+    )
+      return;
     const cue = cues[cues.length - 1];
     const cueKey = `${trackKey}#${cue.id}`;
-    if (cue.end - t > PAUSE_BEFORE_END_S || cueKey === this.lastPausedCueKey) return;
+
+    if (cue.end - t > PAUSE_BEFORE_END_S || cueKey === this.lastPausedCueKey)
+      return;
 
     this.lastPausedCueKey = cueKey;
     this.pausedByUs = true;
-    log.debug("pausa a fine battuta:", cue.text);   // ← aggiunta
+    log.debug("pausa a fine battuta:", cue.text); // ← aggiunta
     this.clock.pause();
   }
 
@@ -291,7 +305,6 @@ if (hovering !== this.hovering) this.handleHoverChange(hovering);
   private handleHoverChange = (hovering: boolean): void => {
     this.hovering = hovering;
     this.overlay.setRevealed(hovering);
-log.debug("mouse sul testo:", hovering);
     if (!hovering && this.pausedByUs) {
       this.pausedByUs = false;
       if (this.video.paused) this.clock.play();
