@@ -2,7 +2,7 @@
 
 Estensione per Chrome che mostra **due sottotitoli contemporaneamente** su
 Netflix, per studiare le lingue. Nata come rielaborazione di
-[NflxMultiSubs](https://github.com/dannvix/NflxMultiSubs), codice e struttura sono stati modificati in gran parte.
+[NflxMultiSubs](https://github.com/dannvix/NflxMultiSubs), codice e struttura sono stati in gran parte modificati .
 
 Funzioni:
 
