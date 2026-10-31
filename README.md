@@ -2,8 +2,7 @@
 
 Estensione per Chrome che mostra **due sottotitoli contemporaneamente** su
 Netflix, per studiare le lingue. Nata come rielaborazione di
-[NflxMultiSubs](https://github.com/dannvix/NflxMultiSubs), riscritta da zero
-nella versione 2.0.
+[NflxMultiSubs](https://github.com/dannvix/NflxMultiSubs), codice e struttura sono stati modificati in gran parte.
 
 Funzioni:
 
@@ -23,10 +22,6 @@ Serve Node.js (versione 18 o successiva).
 npm install        # una volta sola
 npm run build      # crea la cartella dist/
 ```
-
-**Icone:** la cartella `static/assets/` è vuota. Copiaci le icone della
-versione vecchia (`icon16.png`, `icon32.png`, `icon128.png`, dalla vecchia
-`dist/assets`), altrimenti Chrome rifiuta di caricare l'estensione.
 
 Per caricarla in Chrome:
 
@@ -349,21 +344,3 @@ Tutti i punti che dipendono da Netflix sono nella cartella `page/netflix/`:
 - La barra dei controlli viene riconosciuta dalla presenza di un elemento
   nel DOM: se Netflix lo lascia sempre presente, i sottotitoli restano
   sempre un po' più in alto.
-
-## Cosa è cambiato rispetto alla versione 1
-
-| Prima                                                                                     | Ora                                                              | Perché                                                              |
-| ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
-| webpack con `splitChunks`, nome del chunk `338.min.js` scritto a mano                     | esbuild, un file per ogni punto di ingresso                      | le estensioni non sanno caricare i chunk; build unica e prevedibile |
-| script iniettato con `<script>` all'evento `load`                                         | dichiarato nel manifest con `world: MAIN` a `document_start`     | il manifest veniva perso                                            |
-| attivazione solo all'arrivo del manifest                                                  | `Controller.tryActivate` su manifest **e** cambio URL            | bug "devo ricaricare la pagina"                                     |
-| overlay grande quanto il player, senza `pointer-events: none`, z-index forzati su Netflix | Shadow DOM trasparente ai click, nessuno stile toccato a Netflix | "Salta intro" e "Prossimo episodio" non cliccabili                  |
-| `video.play()` chiamato a ogni battuta                                                    | riprende solo se la pausa l'ha messa l'estensione                | conflitti con le pause di Netflix                                   |
-| `video.currentTime`                                                                       | `PlayerClock` + `Calibrator`                                     | sfasamento con la pubblicità                                        |
-| manifest nel formato 1 (`timedtexttracks`)                                                | formati 1 e 2 (`textTracks`), vedi `manifestFormat.ts`           | Netflix ha cambiato i nomi dei campi                                |
-| manifest intercettato tramite `JSON.parse`                                                | intercettazione delle richieste XHR/fetch del manifest           | il player di Netflix non passa più da `JSON.parse`                  |
-| `Promise.race` senza `return`, download da tutti i server                                 | tentativi in ordine, stati corretti                              | traccia "pronta" prima del download                                 |
-| tempi sempre divisi per 10.000.000                                                        | `ttp:tickRate` letto dal file e più formati di tempo             | tempi sbagliati con alcuni formati                                  |
-| React + MUI + Emotion nella pagina                                                        | TypeScript semplice, CSS isolato nello Shadow DOM                | da centinaia di KB a circa 22 KB, nessun conflitto di stili         |
-| popup che manda messaggi alla scheda attiva                                               | popup che scrive solo nello storage                              | funzionava solo se la scheda attiva era Netflix                     |
-| `MutationObserver` su attributi e testo di tutto il body                                  | solo `childList`, attivo solo durante la riproduzione            | migliaia di callback inutili                                        |
